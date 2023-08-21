@@ -6,7 +6,7 @@ internal class Text_rpg
     public class Introduction
     {
         private static PlayerStatus status;
-        //private static PlayerInventory inventory;
+        private static PlayerInventory inventory;
 
 
         class RPGClass
@@ -14,7 +14,10 @@ internal class Text_rpg
             static void SetStatus()
             {
                 status = new PlayerStatus("BLENDER", 1, 10, 5, 3);
-                //inventory = new PlayerInventory();
+            }
+            static void SetInventory()
+            {
+                
             }
 
             static void Main(string[] args)
@@ -94,18 +97,11 @@ internal class Text_rpg
 
         public class PlayerStatus
         {
-            //private string name = "BLENDER";
-            //private int level = 0;
-            //private int hp = 10;
-            //private int atk = 5;
-            //private int def = 5;
-
             public string Name { get; }
             public int Level { get; }
             public int Hp { get; }
             public int Atk { get; }
             public int Def { get;  }
-
 
             public PlayerStatus(string name, int level, int hp, int atk, int def)
             {
@@ -115,12 +111,36 @@ internal class Text_rpg
                 Atk = atk;
                 Def = def;
             }
+        }
 
-            public class PlayerInventory
+        public class Item
+        {
+            public string ItemName { get; set; }
+            public int Effect { get; set; }
+            public string Description { get; set; }
+
+            public Item(string itemName, int effect, string description)
             {
-                public string dd;
+                ItemName = itemName;
+                Effect = effect;
+                Description = description;
             }
+        }
 
+        public class PlayerInventory
+        {
+            private List<Item> items = new List<Item>();
+
+            public List<Item> Items { get; }
+
+            public PlayerInventory()
+            {
+                items = new List<Item>();
+            }
+            //public void AddItem(Item item)
+            //{
+            //    items.Add(item);
+            //}
         }
 
     }
