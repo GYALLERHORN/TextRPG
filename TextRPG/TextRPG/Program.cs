@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Channels;
 
 internal class Text_rpg
 {
-    public class Introduction
+    public class InGame
     {
-        private static PlayerStatus status;
-        private static PlayerInventory inventory;
+        private static PlayerStatus status; // PlayerStatus라는 형식(클래스)의 status변수 선언
 
 
         class WelcomeScene
@@ -14,10 +14,6 @@ internal class Text_rpg
             static void SetStatus()
             {
                 status = new PlayerStatus("BLENDER", 1, 10, 5, 3);
-            }
-            static void SetInventory()
-            {
-
             }
 
             static void Main(string[] args)
@@ -107,12 +103,10 @@ internal class Text_rpg
 
             public void ShowInventory()
             {
-                Item weapon1 = new Item("나뭇가지".PadLeft(20), 3, "굵은 나뭇가지입니다.");
-                Item armor1 = new Item("가죽갑옷".PadLeft(20), 5, "ㅇㅇ알돌ㄴㄴㄴ 갑옷입니다.");
-                inventory.additem(weapon1);
-                inventory.additem(armor1);
-
-                Console.WriteLine("소유 중인 아이템 목록입니다.");
+                Item item1 = new Item("나뭇가지".PadLeft(20), 3, "굵은 나뭇가지입니다.");
+                inventory.additem(item1);
+                Item item2 = new Item("가죽갑옷".PadLeft(20), 5, "ㅇㅇ알돌ㄴㄴㄴ 갑옷입니다.");
+                inventory.additem(item2);
                 inventory.DisplayInventory();
             }
 
@@ -120,7 +114,7 @@ internal class Text_rpg
 
         }
 
-        public class PlayerStatus
+        public class PlayerStatus // 클래스
         {
             public string Name { get; set; }
             public int Level { get; }
@@ -150,6 +144,12 @@ internal class Text_rpg
                 Effect = effect;
                 Description = description;
             }
+
+            PlayerInventory inventory = new PlayerInventory();
+            public void GetItem(Item item)
+            {
+                inventory.additem(item);
+            }
         }
 
         public class PlayerInventory
@@ -170,10 +170,14 @@ internal class Text_rpg
 
             public void DisplayInventory()
             {
+                Console.WriteLine("소유 중인 아이템 목록입니다.");
+                int i = 1;
                 foreach (Item item in items)
                 {
-                    Console.WriteLine($"{item.ItemName}, {item.Effect}, {item.Description}");
+                    Console.WriteLine($"#{string.Format("{0:00}", i++)} : {item.ItemName}, {item.Effect}, {item.Description}");
                 }
+
+
             }
         }
 
