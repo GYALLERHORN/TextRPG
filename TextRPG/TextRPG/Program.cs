@@ -7,14 +7,14 @@ internal class Text_rpg
 {
     public class InGame
     {
-        private static Player status; // PlayerStatus라는 형식(클래스)의 status변수 선언
+        private static Player player; // PlayerStatus라는 형식(클래스)의 status변수 선언
         // static클래스가 아니라 뭐다? static한 메서드다.
 
         class WelcomeScene
         {
             static void SetStatus()
             {
-                status = new Player("None", "나그네", 1, 10, 5, 3, 500);
+                player = new Player("None", "전사", 1, 100, 10, 5, 1500);
             }
 
             static void Main(string[] args)
@@ -22,7 +22,7 @@ internal class Text_rpg
                 SetStatus();
 
                 Console.Write("우선, 이름을 입력하세요 : ");
-                status.Name = Console.ReadLine();
+                player.Name = Console.ReadLine();
                 Console.WriteLine("소개글");
                 Console.WriteLine("시작하려면 아무 키나 누르세요. 0을 누르면 종료합니다.");
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
@@ -40,9 +40,10 @@ internal class Text_rpg
 
         public class PrimaryScene
         {
+            static SecondaryScene secondaryScene = new SecondaryScene();
+            static InputCheckMachine inputCheck = new InputCheckMachine();
             public static void PrimaryChoice()
             {
-                SecondaryScene secondaryScene = new SecondaryScene();
                 Console.Clear();
                 Console.WriteLine("첫 화면입니다.");
                 Console.WriteLine("던전 입장 전 상태를 확인하고, 정비하세요. 선택지의 번호를 입력하면 해당 기능이 실행됩니다.");
@@ -51,9 +52,8 @@ internal class Text_rpg
                 Console.WriteLine();
                 Console.WriteLine();
                 Console.WriteLine("\t[0] : 게임 종료\n");
-
-                InputCheckMachine inputCheck = new InputCheckMachine();
                 Console.WriteLine("숫자를 입력하세요.(0~2) : ");
+
                 int input = inputCheck.CheckAvailable(0, 2);
                 switch (input)
                 {
@@ -94,20 +94,20 @@ internal class Text_rpg
 
         public class SecondaryScene
         {
-            InputCheckMachine inputCheck = new InputCheckMachine();
             public void ShowStatus()
             {
                 Console.Clear();
                 Console.WriteLine("현재 상태입니다.");
-                Console.WriteLine($"NAME  : {status.Name}");
-                Console.WriteLine($"NAME  : {status.Job}");
-                Console.WriteLine($"LEVEL : {status.Level}");
-                Console.WriteLine($"HP    : {status.Hp}");
-                Console.WriteLine($"Atk   : {status.Atk}");
-                Console.WriteLine($"DEF   : {status.Def}");
-                Console.WriteLine($"NAME  : {status.Gold}");
+                Console.WriteLine($"NAME  : {player.Name}");
+                Console.WriteLine($"NAME  : {player.Job}");
+                Console.WriteLine($"LEVEL : {player.Level}");
+                Console.WriteLine($"HP    : {player.Hp}");
+                Console.WriteLine($"Atk   : {player.Atk}");
+                Console.WriteLine($"DEF   : {player.Def}");
+                Console.WriteLine($"NAME  : {player.Gold}");
                 Console.WriteLine("=========================");
                 Console.Write("첫 화면으로 나가려면 0을 입력하세요 : ");
+            InputCheckMachine inputCheck = new InputCheckMachine();
                 int input = inputCheck.CheckAvailable(0,0);
                 if (input == 0)
                 {
@@ -116,13 +116,17 @@ internal class Text_rpg
             }
 
             PlayerInventory inventory = new PlayerInventory();
-
+            bool isFirstEntry = true;
             public void ShowInventory()
             {
-                Item item1 = new Item("    ", "나뭇가지", "ATK +2", "굵은 나뭇가지입니다.");
-                inventory.additem(item1);
-                Item item2 = new Item("    ", "가죽갑옷", "DEF +3", "ㅇㅇ알돌ㄴㄴㄴ 갑옷입니다.");
-                inventory.additem(item2);
+                if (isFirstEntry)
+                {
+                    Item item1 = new Item("    ", "나뭇가지", "ATK +2", "굵은 나뭇가지입니다.");
+                    inventory.additem(item1);
+                    Item item2 = new Item("    ", "가죽갑옷", "DEF +3", "가죽제 갑옷입니다.");
+                    inventory.additem(item2);
+                    isFirstEntry = false;
+                }
                 inventory.DisplayInventory();
             }
         }
@@ -156,14 +160,14 @@ internal class Text_rpg
                 switch (itemStatus[0])
                 {
                     case "ATK":
-                        status.Atk += buff;
+                        player.Atk += buff;
                         break;
                     case "DEF":
-                        status.Def += buff;
+                        player.Def += buff;
                         break;
                 }
-                            item.IsEquipped = true;
-                            item.EquippedMark = "[E]";
+                item.IsEquipped = true;
+                item.EquippedMark = "[E]";
             }
             public void Unequip(Item item)
             {
@@ -173,14 +177,14 @@ internal class Text_rpg
                 switch (itemStatus[0])
                 {
                     case "ATK":
-                        status.Atk -= buff;
+                        player.Atk -= buff;
                         break;
                     case "DEF":
-                        status.Def -= buff;
+                        player.Def -= buff;
                         break;
                 }
-                            item.IsEquipped = false;
-                            item.EquippedMark = "[U]";
+                item.IsEquipped = false;
+                item.EquippedMark = "[U]";
             }
         }
 
@@ -223,35 +227,34 @@ internal class Text_rpg
                 items.Add(item);
             }
 
+                  InputCheckMachine inputCheck = new InputCheckMachine();
             public void DisplayInventory()
             {
                 while (true)
                 {
                     Console.Clear();
-                Console.WriteLine(items[1].IsEquipped); // 왜 다시 false가 되지?
                     Console.WriteLine("소유 중인 아이템 목록입니다.");
                     Console.WriteLine("아이템 번호 |    아이템명    | [E/U] | 장착효과 | 세부설명");
                     Console.WriteLine("-------------------------------------------------------------------------");
 
-                    int i = 1;
+                    int itemNumber = 1;
                     foreach (Item item in items)
                     {
                         item.EquippedMark = item.IsEquipped ? "[E]" : "[U]";
-                        Console.WriteLine($"#{string.Format("{0:        ######00}", i++)} : {item.ItemName.PadLeft(10)} |{item.EquippedMark.PadLeft(4)} | {item.Effect.PadLeft(5)} | {item.Description}");
+                        Console.WriteLine($"#{string.Format("{0:        ######00}", itemNumber++)} : {item.ItemName.PadLeft(10)} |{item.EquippedMark.PadLeft(4)} | {item.Effect.PadLeft(5)} | {item.Description}");
                     }
                     Console.WriteLine("=========================================================");
                     Console.Write("숫자 입력으로 장착할 아이템을 선택하세요\n[E/U]는 장착/미장착 상태를 나타냅니다.\n" +
                         "이미 장착 중인 아이템을 재입력하면 장착 해제됩니다.\n 0 입력 시 첫 화면으로 돌아갑니다. : ");
 
-                    InputCheckMachine inputCheck = new InputCheckMachine();
                     int input = inputCheck.CheckAvailable(0, items.Count);
                     if (input == 0)
                     {
                         PrimaryScene.PrimaryChoice();
+                        break;
                     }
                     else
                     {
-                        Player player = new Player(status.Name, status.Job, status.Level, status.Hp, status.Atk, status.Def, status.Gold);
                         Item selecteditem = items[input - 1];
                         if (!selecteditem.IsEquipped)
                         {
