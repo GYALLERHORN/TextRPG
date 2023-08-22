@@ -14,7 +14,7 @@ internal class Text_rpg
         {
             static void SetStatus()
             {
-                status = new Player("None", 1, 10, 5, 3);
+                status = new Player("None", "나그네", 1, 10, 5, 3, 500);
             }
 
             static void Main(string[] args)
@@ -100,10 +100,12 @@ internal class Text_rpg
                 Console.Clear();
                 Console.WriteLine("현재 상태입니다.");
                 Console.WriteLine($"NAME  : {status.Name}");
+                Console.WriteLine($"NAME  : {status.Job}");
                 Console.WriteLine($"LEVEL : {status.Level}");
                 Console.WriteLine($"HP    : {status.Hp}");
                 Console.WriteLine($"Atk   : {status.Atk}");
                 Console.WriteLine($"DEF   : {status.Def}");
+                Console.WriteLine($"NAME  : {status.Gold}");
                 Console.WriteLine("=========================");
                 Console.Write("첫 화면으로 나가려면 0을 입력하세요 : ");
                 int input = inputCheck.CheckAvailable(0,0);
@@ -117,9 +119,9 @@ internal class Text_rpg
 
             public void ShowInventory()
             {
-                Item item1 = new Item(false, "    ", "나뭇가지", "ATK +2", "굵은 나뭇가지입니다.");
+                Item item1 = new Item("    ", "나뭇가지", "ATK +2", "굵은 나뭇가지입니다.");
                 inventory.additem(item1);
-                Item item2 = new Item(false, "    ", "가죽갑옷", "DEF +3", "ㅇㅇ알돌ㄴㄴㄴ 갑옷입니다.");
+                Item item2 = new Item("    ", "가죽갑옷", "DEF +3", "ㅇㅇ알돌ㄴㄴㄴ 갑옷입니다.");
                 inventory.additem(item2);
                 inventory.DisplayInventory();
             }
@@ -128,18 +130,22 @@ internal class Text_rpg
         public class Player
         {
             public string Name { get; set; }
+            public string Job { get; set; }
             public int Level { get; }
             public int Hp { get; }
             public int Atk { get; set; }
             public int Def { get; set; }
+            public int Gold { get; set; }
 
-            public Player(string name, int level, int hp, int atk, int def)
+            public Player(string name, string job, int level, int hp, int atk, int def, int gold)
             {
                 Name = name;
+                Job = job;
                 Level = level;
                 Hp = hp;
                 Atk = atk;
                 Def = def;
+                Gold = gold;
             }
 
             public void Equip(Item item)
@@ -186,9 +192,8 @@ internal class Text_rpg
             public string Effect { get; set; }
             public string Description { get; set; }
 
-            public Item(bool isEquipped, string equippedMark, string itemName, string effect, string description)
+            public Item(string equippedMark, string itemName, string effect, string description)
             {
-                IsEquipped = isEquipped;
                 EquippedMark = equippedMark;
                 ItemName = itemName;
                 Effect = effect;
@@ -246,7 +251,7 @@ internal class Text_rpg
                     }
                     else
                     {
-                        Player player = new Player(status.Name, status.Level, status.Hp, status.Atk, status.Def);
+                        Player player = new Player(status.Name, status.Job, status.Level, status.Hp, status.Atk, status.Def, status.Gold);
                         Item selecteditem = items[input - 1];
                         if (!selecteditem.IsEquipped)
                         {
