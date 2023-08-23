@@ -9,7 +9,7 @@ internal class Text_rpg
     public class InGame
     {
         private static Player player; // PlayerStatus라는 형식(클래스)의 status변수 선언
-
+        static PlayerInventory inventory = new PlayerInventory();
         class WelcomeScene
         {
             static void SetStatus()
@@ -23,7 +23,7 @@ internal class Text_rpg
 
                 Console.Write("우선, 이름을 입력하세요 : ");
                 player.Name = Console.ReadLine();
-                Console.WriteLine("소개글");
+                Console.WriteLine("게임을 시작합니다.");
                 Console.WriteLine("시작하려면 아무 키나 누르세요. 0을 누르면 종료합니다.");
                 ConsoleKeyInfo keyInfo = Console.ReadKey();
                 if (keyInfo.KeyChar == '0')
@@ -112,7 +112,7 @@ internal class Text_rpg
                 Console.WriteLine($"DEF   : {showDEF}");
                 Console.WriteLine($"GOLD  : {player.Gold}");
                 Console.WriteLine("=========================");
-                Console.Write("첫 화면으로 나가려면 0을 입력하세요 : ");
+                Console.Write("첫 화면으로 돌아가려면 0을 입력하세요 : ");
 
                 InputCheckMachine inputCheck = new InputCheckMachine();
                 int input = inputCheck.CheckAvailable(0, 0);
@@ -122,13 +122,12 @@ internal class Text_rpg
                 }
             }
 
-            PlayerInventory inventory = new PlayerInventory();
             bool isFirstInvenEntry = true;
             public void ShowInventory()
             {
                 if (isFirstInvenEntry)
                 {
-                    Item item1 = new Item("    ", "직검", "ATK +2", "평범한 양손 직검입니다.");
+                    Item item1 = new Item("    ", "무딘 직검", "ATK +2", "평범한 양손 직검입니다.");
                     inventory.Additem(item1);
                     Item item2 = new Item("    ", "가죽갑옷", "DEF +3", "가죽제 갑옷입니다.");
                     inventory.Additem(item2);
@@ -144,9 +143,9 @@ internal class Text_rpg
                 Console.WriteLine("상점을 차릴겁니다.\n\n");
                 if (isFirstStoreEntry)
                 {
-                    Product product1 = new Product(" ", "아주 무거운 갑옷", "ATK -80", "지금은 못입어요.", 1000);
+                    Product product1 = new Product(" ", "무거운 갑옷", "ATK -80", "움직일 수가 없어요.", 1000);
                     store.AddProduct(product1);
-                    Product product2 = new Product(" ", "파랗게 빛나는 단검", "ATK +999", "뾰족해져요.", 10);
+                    Product product2 = new Product(" ", "푸른빛 단검", "ATK +999", "뾰족해져요.", 10);
                     store.AddProduct(product2);
                     isFirstStoreEntry = false;
                 }
@@ -164,8 +163,6 @@ internal class Text_rpg
             public int Atk { get; set; }
             public int Def { get; set; }
             public int Gold { get; set; }
-
-            public PlayerInventory myInventory;
 
             public Player(string name, string job, int level, int hp, int atk, int def, int gold)
             {
@@ -237,10 +234,7 @@ internal class Text_rpg
             }
             public void Buy(Product product)
             {
-                PlayerInventory inventory = new PlayerInventory();
                 player.Gold -= product.Cost;
-                Console.WriteLine("물건을 샀습니다.");
-                Thread.Sleep(300);
                 Item boughtItem = new Item(product.EquippedMark, product.ProductName, product.Effect, product.Description);
                 inventory.Additem(boughtItem);
             }
@@ -262,7 +256,6 @@ internal class Text_rpg
                 Description = description;
             }
 
-            PlayerInventory inventory = new PlayerInventory();
             public void GetItem(Item item)
             {
                 inventory.Additem(item);
@@ -282,8 +275,6 @@ internal class Text_rpg
 
             public void Additem(Item item)
             {
-                Console.WriteLine($"{item}을 샀습니다.");
-                Thread.Sleep(6000);
                 items.Add(item);
             }
 
@@ -294,7 +285,7 @@ internal class Text_rpg
                 {
                     Console.Clear();
                     Console.WriteLine("소유 중인 아이템 목록입니다.");
-                    Console.WriteLine("아이템 번호 |    아이템명    | [E/U] | 장착효과 | 세부설명");
+                    Console.WriteLine("아이템 번호 |       아이템명       | [E/U] | 장착효과 | 세부설명");
                     Console.WriteLine("-------------------------------------------------------------------------");
 
                     int itemNumber = 1;
