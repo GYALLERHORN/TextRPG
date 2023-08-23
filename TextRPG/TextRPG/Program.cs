@@ -102,8 +102,10 @@ internal class Text_rpg
                 Console.WriteLine($"NAME  : {player.Job}");
                 Console.WriteLine($"LEVEL : {player.Level}");
                 Console.WriteLine($"HP    : {player.Hp}");
-                Console.WriteLine($"Atk   : {player.Atk}");
-                Console.WriteLine($"DEF   : {player.Def}");
+                string showATK = player.isATKBuffed ? player.buffedPlayerATK : player.Atk.ToString();
+                Console.WriteLine($"ATK   : {showATK}");
+                string showDEF = player.isDEFBuffed ? player.buffedPlayerDEF : player.Def.ToString();
+                Console.WriteLine($"DEF   : {showDEF}");
                 Console.WriteLine($"NAME  : {player.Gold}");
                 Console.WriteLine("=========================");
                 Console.Write("첫 화면으로 나가려면 0을 입력하세요 : ");
@@ -161,9 +163,11 @@ internal class Text_rpg
                 {
                     case "ATK":
                         player.Atk += buff;
+                        ManageBuff(itemStatus);
                         break;
                     case "DEF":
                         player.Def += buff;
+                        ManageBuff(itemStatus);
                         break;
                 }
                 item.IsEquipped = true;
@@ -178,13 +182,35 @@ internal class Text_rpg
                 {
                     case "ATK":
                         player.Atk -= buff;
+                        isATKBuffed = false;
                         break;
                     case "DEF":
                         player.Def -= buff;
+                        isDEFBuffed = false;
                         break;
                 }
                 item.IsEquipped = false;
                 item.EquippedMark = "[U]";
+            }
+
+            public bool isATKBuffed = false;
+            public bool isDEFBuffed = false;
+
+            public string buffedPlayerATK;
+            public string buffedPlayerDEF;
+            public void ManageBuff(string[] itemStatus)
+            {
+                switch (itemStatus[0])
+                {
+                    case "ATK":
+                        buffedPlayerATK = $"{player.Atk} ( {itemStatus[1]} )";
+                        isATKBuffed = true;
+                        break;
+                    case "DEF":
+                        buffedPlayerDEF = $"{player.Def} ( {itemStatus[1]} )";
+                        isDEFBuffed = true;
+                        break;
+                }
             }
         }
 
